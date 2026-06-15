@@ -34,3 +34,10 @@ data/marts/*.parquet
 secrets/
 
 
+secrets/
+.venv/
+__pycache__/
+*.pyc
+data/raw/
+data/marts/
+.DS_Store
