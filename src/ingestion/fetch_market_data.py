@@ -204,9 +204,13 @@ def run_market_data_ingestion(
     return final_df
 
 
-if __name__ == "__main__":
-    run_market_data_ingestion(
+def main():
+    return run_market_data_ingestion(
         tickers=TICKERS,
         start_date=START_DATE,
         end_date=END_DATE,
     )
+
+
+if __name__ == "__main__":
+    main()

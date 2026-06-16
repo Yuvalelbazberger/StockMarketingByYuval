@@ -21,6 +21,14 @@ def calculate_rsi(close_prices, window=14):
 
 
 def split_by_ticker(raw_data):
+    if {"ticker", "date", "close"}.issubset(raw_data.columns):
+        for ticker, ticker_data in raw_data.groupby("ticker"):
+            ticker_data = ticker_data.copy()
+            ticker_data["date"] = pd.to_datetime(ticker_data["date"])
+            ticker_data = ticker_data.sort_values("date").set_index("date")
+            yield ticker, ticker_data
+        return
+
     if not isinstance(raw_data.columns, pd.MultiIndex):
         yield "UNKNOWN", raw_data
         return
@@ -40,12 +48,17 @@ def split_by_ticker(raw_data):
 
 def analyze_ticker(ticker, prices):
     prices = prices.copy()
+    prices.columns = [str(column).lower() for column in prices.columns]
 
-    if "Close" not in prices.columns:
+    if "close" not in prices.columns:
         return pd.DataFrame()
 
-    close = prices["Close"]
-    volume = prices["Volume"] if "Volume" in prices.columns else pd.Series(index=prices.index)
+    prices = prices[prices["close"].notna()].copy()
+    if prices.empty:
+        return pd.DataFrame()
+
+    close = prices["close"]
+    volume = prices["volume"] if "volume" in prices.columns else pd.Series(index=prices.index)
 
     result = pd.DataFrame(index=prices.index)
     result["ticker"] = ticker
