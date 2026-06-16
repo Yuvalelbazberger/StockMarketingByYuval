@@ -1,3 +1,5 @@
+import json
+import os
 from pathlib import Path
 
 import pandas as pd
@@ -11,7 +13,7 @@ LOOKER_EXPORT_PATH = MARTS_DATA_DIR / "tableau_stock_dashboard.csv"
 
 SERVICE_ACCOUNT_FILE = Path("secrets/google_service_account.json")
 
-SPREADSHEET_ID = "1Bc_uMtB-hSLzinsDJmL-_Kp8qiXTaj2HBnB2ZJjI-aY"
+SPREADSHEET_ID = os.getenv("GOOGLE_SHEET_ID") or "1Bc_uMtB-hSLzinsDJmL-_Kp8qiXTaj2HBnB2ZJjI-aY"
 
 SHEET_NAME = "dashboard_data"
 
@@ -38,20 +40,28 @@ def upload_to_google_sheets():
             "Run python -m src.analysis.generate_insights first."
         )
 
-    if not SERVICE_ACCOUNT_FILE.exists():
-        raise FileNotFoundError(
-            f"Missing service account file: {SERVICE_ACCOUNT_FILE}"
-        )
-
     df = pd.read_csv(LOOKER_EXPORT_PATH)
     df = prepare_dataframe_for_sheets(df)
 
     values = [df.columns.tolist()] + df.values.tolist()
 
-    credentials = Credentials.from_service_account_file(
-        SERVICE_ACCOUNT_FILE,
-        scopes=SCOPES,
-    )
+    service_account_json = os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON")
+
+    if service_account_json:
+        credentials = Credentials.from_service_account_info(
+            json.loads(service_account_json),
+            scopes=SCOPES,
+        )
+    else:
+        if not SERVICE_ACCOUNT_FILE.exists():
+            raise FileNotFoundError(
+                f"Missing service account file: {SERVICE_ACCOUNT_FILE}"
+            )
+
+        credentials = Credentials.from_service_account_file(
+            SERVICE_ACCOUNT_FILE,
+            scopes=SCOPES,
+        )
 
     service = build("sheets", "v4", credentials=credentials)
     sheet = service.spreadsheets()
