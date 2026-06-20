@@ -12,7 +12,8 @@ on:
       - "requirements.txt"
       - ".github/workflows/update-dashboard.yml"
   schedule:
-    - cron: "0 13 * * 1-5"
+    # Run after the 4:00 p.m. ET market close in both EST and EDT.
+    - cron: "30 22 * * 1-5"
 
 jobs:
   update-dashboard:
@@ -26,10 +27,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.11"
 
