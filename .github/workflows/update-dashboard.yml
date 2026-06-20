@@ -22,7 +22,7 @@ jobs:
       PYTHONPATH: .
       PYTHONUNBUFFERED: "1"
       GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
-      GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
+      GOOGLE_SHEET_ID: "1Bc_uMtB-hSLzinsDJmL-_Kp8qiXTaj2HBnB2ZJjI-aY"
 
     steps:
       - name: Checkout repository

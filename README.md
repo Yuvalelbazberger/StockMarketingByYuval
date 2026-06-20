@@ -72,8 +72,9 @@ data/marts/tableau_stock_dashboard.csv
 Looker Studio
 The final dataset is uploaded to Google Sheets and used as the data source for a Looker Studio dashboard.
 
-For GitHub Actions, add `GOOGLE_SERVICE_ACCOUNT_JSON` and `GOOGLE_SHEET_ID` as
-repository secrets. The Google Sheet must also be shared with the service
+For GitHub Actions, add `GOOGLE_SERVICE_ACCOUNT_JSON` as a repository secret.
+The workflow contains the destination spreadsheet ID, which is an identifier
+rather than a credential. The Google Sheet must also be shared with the service
 account's `client_email` as an Editor; storing the credentials as a secret does
 not grant access to the spreadsheet by itself.
 
