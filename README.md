@@ -6,6 +6,10 @@ A Python-based market intelligence project that collects stock market data, calc
 
 This project analyzes selected stocks using market data from Yahoo Finance through `yfinance`.
 
+The tracked universe follows the Nasdaq-100 composition effective June 22,
+2026. It contains 100 companies and 101 ticker symbols because Alphabet has two
+share classes in the index: `GOOG` and `GOOGL`.
+
 The pipeline includes:
 
 1. Fetch stock market data
