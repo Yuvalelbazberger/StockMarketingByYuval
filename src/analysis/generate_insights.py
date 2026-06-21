@@ -2,12 +2,14 @@ import numpy as np
 import pandas as pd
 
 from src.analysis.generate_alerts import add_alert_columns
+from src.analysis.generate_watchlist import add_watchlist_columns
 from src.utils.config import MARTS_DATA_DIR
 
 
 STOCK_FEATURES_PATH = MARTS_DATA_DIR / "stock_features.parquet"
 STOCK_INSIGHTS_PATH = MARTS_DATA_DIR / "stock_insights.csv"
 TABLEAU_EXPORT_PATH = MARTS_DATA_DIR / "tableau_stock_dashboard.csv"
+STOCK_WATCHLIST_PATH = MARTS_DATA_DIR / "stock_watchlist.csv"
 
 
 def format_pct(value):
@@ -95,6 +97,7 @@ def main():
         .copy()
     )
     latest = add_alert_columns(latest)
+    latest = add_watchlist_columns(latest)
 
     latest["risk_level"] = latest.apply(classify_risk, axis=1)
     latest["insight"] = latest.apply(build_insight, axis=1)
@@ -122,6 +125,13 @@ def main():
         "alert_active",
         "alert_type",
         "alert_message",
+        "watchlist_member",
+        "watchlist_category",
+        "watchlist_rank",
+        "opportunity_score",
+        "top_opportunity",
+        "high_momentum",
+        "watchlist_reason",
         "insight",
     ]
 
@@ -131,13 +141,34 @@ def main():
 
     insights.to_csv(STOCK_INSIGHTS_PATH, index=False)
     insights.to_csv(TABLEAU_EXPORT_PATH, index=False)
+    watchlist = insights.loc[insights["watchlist_member"]].sort_values(
+        ["watchlist_rank", "ticker"]
+    )
+    watchlist.to_csv(STOCK_WATCHLIST_PATH, index=False)
 
     print(f"Created insights for {len(insights)} tickers")
     print(f"Saved insights to: {STOCK_INSIGHTS_PATH}")
     print(f"Saved Tableau export to: {TABLEAU_EXPORT_PATH}")
+    print(f"Saved watchlist to: {STOCK_WATCHLIST_PATH}")
+    print(
+        f"Watchlist: {len(watchlist)} stocks, "
+        f"{int(watchlist['top_opportunity'].sum())} top opportunities, "
+        f"{int(watchlist['high_momentum'].sum())} high momentum"
+    )
 
     print("\nPreview:")
-    print(insights[["ticker", "trend", "signal", "risk_level", "insight"]])
+    print(
+        insights[
+            [
+                "ticker",
+                "trend",
+                "signal",
+                "risk_level",
+                "watchlist_category",
+                "insight",
+            ]
+        ]
+    )
 
 
 if __name__ == "__main__":
