@@ -24,6 +24,9 @@ jobs:
       PYTHONUNBUFFERED: "1"
       GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
       GOOGLE_SHEET_ID: "1Bc_uMtB-hSLzinsDJmL-_Kp8qiXTaj2HBnB2ZJjI-aY"
+      SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+      SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+      ALERT_EMAIL_TO: "yuvalelbazberger@gmail.com"
 
     steps:
       - name: Checkout repository

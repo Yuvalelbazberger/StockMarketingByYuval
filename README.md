@@ -82,6 +82,21 @@ rather than a credential. The Google Sheet must also be shared with the service
 account's `client_email` as an Editor; storing the credentials as a secret does
 not grant access to the spreadsheet by itself.
 
+## Email Alerts
+
+The daily pipeline detects RSI values above 70 or below 30 and absolute daily
+price moves above 5%. Active alerts are written to
+`data/marts/stock_alerts.csv` and emailed after the dashboard update.
+
+For Gmail delivery, enable two-step verification and create an App Password.
+Add these GitHub Actions repository secrets:
+
+- `SMTP_USERNAME`: the Gmail address used to send alerts
+- `SMTP_PASSWORD`: the 16-character Gmail App Password
+
+The recipient is configured as `ALERT_EMAIL_TO` in the workflow. The pipeline
+continues without sending email when the SMTP secrets are not configured.
+
 Recommended dashboard components:
 Stock returns by ticker
 RSI by ticker
