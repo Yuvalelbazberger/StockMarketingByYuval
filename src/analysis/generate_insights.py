@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+from src.analysis.generate_alerts import add_alert_columns
 from src.utils.config import MARTS_DATA_DIR
 
 
@@ -93,6 +94,7 @@ def main():
         .tail(1)
         .copy()
     )
+    latest = add_alert_columns(latest)
 
     latest["risk_level"] = latest.apply(classify_risk, axis=1)
     latest["insight"] = latest.apply(build_insight, axis=1)
@@ -105,6 +107,7 @@ def main():
         "last_updated",
         "ticker",
         "close",
+        "daily_change_pct",
         "return_5_pct",
         "return_20_pct",
         "ma_20",
@@ -116,6 +119,9 @@ def main():
         "trend",
         "signal",
         "risk_level",
+        "alert_active",
+        "alert_type",
+        "alert_message",
         "insight",
     ]
 
