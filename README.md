@@ -97,7 +97,7 @@ Add these GitHub Actions repository secrets:
 The recipient is configured as `ALERT_EMAIL_TO` in the workflow. The pipeline
 continues without sending email when the SMTP secrets are not configured.
 
-Recommended dashboard components:
+Recommended dashboard components :
 Stock returns by ticker
 RSI by ticker
 Risk level filter
