@@ -2,7 +2,9 @@ import numpy as np
 import pandas as pd
 
 from src.analysis.generate_alerts import add_alert_columns
+from src.analysis.generate_executive_summary import KPI_COLUMNS, save_executive_summary
 from src.analysis.generate_watchlist import add_watchlist_columns
+from src.analysis.risk_model import add_risk_columns
 from src.utils.config import MARTS_DATA_DIR
 
 
@@ -16,18 +18,6 @@ def format_pct(value):
     if pd.isna(value):
         return "unknown"
     return f"{value * 100:.2f}%"
-
-
-def classify_risk(row):
-    volatility = row.get("volatility_20", np.nan)
-    rsi = row.get("rsi_14", np.nan)
-    signal = row.get("signal", "neutral")
-
-    if signal in ["negative_momentum", "overbought"] or volatility > 0.55:
-        return "High"
-    if signal in ["positive_momentum", "oversold"] or volatility < 0.25:
-        return "Medium"
-    return "Medium"
 
 
 def build_insight(row):
@@ -98,13 +88,16 @@ def main():
     )
     latest = add_alert_columns(latest)
     latest = add_watchlist_columns(latest)
+    latest = add_risk_columns(latest)
 
-    latest["risk_level"] = latest.apply(classify_risk, axis=1)
     latest["insight"] = latest.apply(build_insight, axis=1)
 
     latest["return_5_pct"] = latest["return_5"] * 100
     latest["return_20_pct"] = latest["return_20"] * 100
     latest["last_updated"] = pd.to_datetime(latest["datetime"])
+    summary = save_executive_summary(latest)
+    for column in KPI_COLUMNS:
+        latest[column] = summary.iloc[0][column]
 
     output_columns = [
         "last_updated",
@@ -122,6 +115,8 @@ def main():
         "trend",
         "signal",
         "risk_level",
+        "risk_score",
+        "risk_reason",
         "alert_active",
         "alert_type",
         "alert_message",
@@ -132,6 +127,7 @@ def main():
         "top_opportunity",
         "high_momentum",
         "watchlist_reason",
+        *KPI_COLUMNS,
         "insight",
     ]
 
