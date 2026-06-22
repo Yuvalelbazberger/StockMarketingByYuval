@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 import pandas as pd
 
 from src.utils.config import MARTS_DATA_DIR
@@ -85,6 +87,7 @@ def build_executive_summary(insights):
 
     summary = {
         "analysis_date": analysis_date,
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         **counts,
         "market_breadth_pct": market_breadth_pct,
         "avg_return_5_pct": round(float(insights["return_5"].mean() * 100), 2),

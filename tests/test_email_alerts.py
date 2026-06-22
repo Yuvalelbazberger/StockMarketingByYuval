@@ -59,10 +59,12 @@ class EmailAlertsTests(unittest.TestCase):
             summary=summary,
         )
 
-        self.assertIn("MarketPulse Daily Brief | Mixed", message["Subject"])
+        self.assertIn("MarketPulse On-Demand Market Brief | Mixed", message["Subject"])
         plain = message.get_body(preferencelist=("plain",)).get_content()
         html = message.get_body(preferencelist=("html",)).get_content()
         self.assertIn("AAPL (Technology): RSI_OVERBOUGHT, DAILY_MOVE", plain)
+        self.assertIn("Market data through: 2026-06-18", plain)
+        self.assertIn("Report generated:", plain)
         self.assertIn("daily change +6.25%", plain)
         self.assertIn("Executive Snapshot", html)
         self.assertIn("Top Opportunities", html)
@@ -98,6 +100,32 @@ class EmailAlertsTests(unittest.TestCase):
         self.assertTrue(sent)
         smtp.login.assert_called_once_with("sender@example.com", "app-password")
         smtp.send_message.assert_called_once()
+
+    def test_builds_executive_brief_without_active_alerts(self):
+        alerts = pd.DataFrame(
+            columns=[
+                "datetime",
+                "ticker",
+                "ticker_display",
+                "close",
+                "daily_change_pct",
+                "rsi_14",
+                "alert_type",
+            ]
+        )
+        summary = pd.read_csv(self.summary_path)
+        summary["analysis_date"] = "2026-06-22"
+
+        message = email_alerts.build_alert_email(
+            alerts,
+            "sender@example.com",
+            ["recipient@example.com"],
+            summary=summary,
+        )
+
+        plain = message.get_body(preferencelist=("plain",)).get_content()
+        self.assertIn("No active alerts in this update", plain)
+        self.assertIn("Data 2026-06-22", message["Subject"])
 
 
 if __name__ == "__main__":

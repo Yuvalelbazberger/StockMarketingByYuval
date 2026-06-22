@@ -1,7 +1,9 @@
 import os
 import smtplib
+from datetime import datetime
 from email.message import EmailMessage
 from html import escape
+from zoneinfo import ZoneInfo
 
 import pandas as pd
 
@@ -15,6 +17,13 @@ DASHBOARD_URL = os.getenv(
     "LOOKER_DASHBOARD_URL",
     "https://datastudio.google.com/reporting/b3cd37f3-cda8-4080-8140-994c881a8d9e",
 )
+NEW_YORK = ZoneInfo("America/New_York")
+REPORT_WINDOW_LABELS = {
+    "pre_market": "Pre-Market Brief",
+    "market_open": "Market Open Update",
+    "after_close": "Closing Bell Summary",
+    "on_demand": "On-Demand Market Brief",
+}
 
 
 def _summary_value(summary, name, default):
@@ -24,11 +33,19 @@ def _summary_value(summary, name, default):
     return default if pd.isna(value) else value
 
 
-def _plain_text_body(alerts, summary, alert_date):
+def _report_context():
+    window = os.getenv("REPORT_WINDOW", "on_demand")
+    label = REPORT_WINDOW_LABELS.get(window, "Market Update")
+    generated = datetime.now(NEW_YORK).strftime("%Y-%m-%d %H:%M ET")
+    return window, label, generated
+
+
+def _plain_text_body(alerts, summary, alert_date, report_label, generated_at):
     market_regime = _summary_value(summary, "market_regime", "Market update")
     lines = [
-        "MARKETPULSE DAILY EXECUTIVE BRIEF",
-        f"Analysis date: {alert_date}",
+        f"MARKETPULSE {report_label.upper()}",
+        f"Market data through: {alert_date}",
+        f"Report generated: {generated_at}",
         "",
         "EXECUTIVE SNAPSHOT",
         f"Market regime: {market_regime}",
@@ -46,12 +63,15 @@ def _plain_text_body(alerts, summary, alert_date):
         "",
         f"ACTIVE ALERTS ({len(alerts)})",
     ]
-    for row in alerts.itertuples(index=False):
-        ticker_label = getattr(row, "ticker_display", row.ticker)
-        lines.append(
-            f"- {ticker_label}: {row.alert_type} | close {row.close:.2f} | "
-            f"RSI {row.rsi_14:.1f} | daily change {row.daily_change_pct:+.2f}%"
-        )
+    if alerts.empty:
+        lines.append("- No active alerts in this update.")
+    else:
+        for row in alerts.itertuples(index=False):
+            ticker_label = getattr(row, "ticker_display", row.ticker)
+            lines.append(
+                f"- {ticker_label}: {row.alert_type} | close {row.close:.2f} | "
+                f"RSI {row.rsi_14:.1f} | daily change {row.daily_change_pct:+.2f}%"
+            )
     lines.extend(
         [
             "",
@@ -63,7 +83,7 @@ def _plain_text_body(alerts, summary, alert_date):
     return "\n".join(lines)
 
 
-def _html_body(alerts, summary, alert_date):
+def _html_body(alerts, summary, alert_date, report_label, generated_at):
     market_regime = escape(str(_summary_value(summary, "market_regime", "Market Update")))
     breadth = escape(str(_summary_value(summary, "market_breadth_pct", "N/A")))
     watchlist_count = escape(str(_summary_value(summary, "watchlist_count", "N/A")))
@@ -97,14 +117,20 @@ def _html_body(alerts, summary, alert_date):
             """
         )
 
+    if not alert_rows:
+        alert_rows.append(
+            "<tr><td colspan=\"5\" style=\"padding:18px;text-align:center;"
+            "color:#64748b;\">No active alerts in this update.</td></tr>"
+        )
+
     return f"""<!doctype html>
 <html>
   <body style="margin:0;background:#f1f5f9;font-family:Arial,sans-serif;color:#0f172a;">
     <div style="max-width:760px;margin:0 auto;padding:24px 12px;">
       <div style="background:#0f172a;color:#ffffff;padding:28px 32px;border-radius:14px 14px 0 0;">
         <div style="font-size:12px;letter-spacing:1.8px;color:#7dd3fc;font-weight:700;">MARKETPULSE</div>
-        <h1 style="margin:8px 0 4px;font-size:26px;">Daily Executive Brief</h1>
-        <div style="color:#cbd5e1;font-size:14px;">Market analysis for {escape(alert_date)}</div>
+        <h1 style="margin:8px 0 4px;font-size:26px;">{escape(report_label)}</h1>
+        <div style="color:#cbd5e1;font-size:14px;">Market data through {escape(alert_date)} &nbsp;|&nbsp; Generated {escape(generated_at)}</div>
       </div>
 
       <div style="background:#ffffff;padding:28px 32px;">
@@ -153,18 +179,39 @@ def _html_body(alerts, summary, alert_date):
 
 
 def build_alert_email(alerts, sender, recipients, summary=None):
-    alert_date = pd.to_datetime(alerts["datetime"]).max().strftime("%Y-%m-%d")
+    if alerts.empty:
+        alert_date = str(_summary_value(summary, "analysis_date", "No current data"))
+    else:
+        alert_date = pd.to_datetime(alerts["datetime"]).max().strftime("%Y-%m-%d")
     market_regime = _summary_value(summary, "market_regime", "Market Update")
+    _, report_label, generated_at = _report_context()
 
     message = EmailMessage()
     message["Subject"] = (
-        f"MarketPulse Daily Brief | {market_regime} | "
-        f"{len(alerts)} alerts | {alert_date}"
+        f"MarketPulse {report_label} | {market_regime} | "
+        f"Data {alert_date}"
     )
     message["From"] = sender
     message["To"] = ", ".join(recipients)
-    message.set_content(_plain_text_body(alerts, summary, alert_date))
-    message.add_alternative(_html_body(alerts, summary, alert_date), subtype="html")
+    message.set_content(
+        _plain_text_body(
+            alerts,
+            summary,
+            alert_date,
+            report_label,
+            generated_at,
+        )
+    )
+    message.add_alternative(
+        _html_body(
+            alerts,
+            summary,
+            alert_date,
+            report_label,
+            generated_at,
+        ),
+        subtype="html",
+    )
     return message
 
 
@@ -174,9 +221,6 @@ def send_alert_email():
         return False
 
     alerts = pd.read_csv(STOCK_ALERTS_PATH)
-    if alerts.empty:
-        print("Email alerts skipped: no active alerts")
-        return False
     summary = (
         pd.read_csv(EXECUTIVE_SUMMARY_PATH)
         if EXECUTIVE_SUMMARY_PATH.exists()
@@ -205,7 +249,7 @@ def send_alert_email():
         smtp.login(username, password)
         smtp.send_message(message)
 
-    print(f"Sent {len(alerts)} alerts to {', '.join(recipients)}")
+    print(f"Sent market brief with {len(alerts)} alerts to {', '.join(recipients)}")
     return True
 
 

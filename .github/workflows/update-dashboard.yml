@@ -12,8 +12,17 @@ on:
       - "requirements.txt"
       - ".github/workflows/update-dashboard.yml"
   schedule:
-    # Run after the 4:00 p.m. ET market close in both EST and EDT.
-    - cron: "30 22 * * 1-5"
+    # Candidate UTC times are gated against the NYSE calendar and New York time.
+    # Valid runs occur 30 minutes before open, 5 minutes after open, and
+    # 15 minutes after close, including DST and early-close adjustments.
+    - cron: "0 13 * * 1-5"
+    - cron: "0 14 * * 1-5"
+    - cron: "35 13 * * 1-5"
+    - cron: "35 14 * * 1-5"
+    - cron: "15 17 * * 1-5"
+    - cron: "15 18 * * 1-5"
+    - cron: "15 20 * * 1-5"
+    - cron: "15 21 * * 1-5"
 
 jobs:
   update-dashboard:
@@ -42,8 +51,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Determine market report window
+        id: market-window
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          SCHEDULE_EXPRESSION: ${{ github.event.schedule }}
+        run: python scripts/market_schedule.py >> "$GITHUB_OUTPUT"
+
+      - name: Run static checks
+        if: steps.market-window.outputs.should_run == 'true'
+        run: ruff check src scripts tests
+
       - name: Run tests
+        if: steps.market-window.outputs.should_run == 'true'
         run: python -m unittest discover -s tests -v
 
       - name: Run market pipeline
+        if: steps.market-window.outputs.should_run == 'true'
+        env:
+          REPORT_WINDOW: ${{ steps.market-window.outputs.report_window }}
         run: python scripts/run_pipeline.py
