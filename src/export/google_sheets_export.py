@@ -36,6 +36,10 @@ def prepare_dataframe_for_sheets(df):
     return df
 
 
+def dataframe_values(dataframe):
+    return json.loads(dataframe.to_json(orient="values", date_format="iso"))
+
+
 def load_credentials():
     service_account_json = os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON")
 
@@ -95,7 +99,7 @@ def ensure_sheet_exists(service, sheet_name):
 
 
 def replace_dashboard_values(sheet, dataframe):
-    values = [dataframe.columns.tolist()] + dataframe.values.tolist()
+    values = [dataframe.columns.tolist()] + dataframe_values(dataframe)
     sheet.values().clear(
         spreadsheetId=SPREADSHEET_ID,
         range=f"{SHEET_NAME}!A:AZ",
@@ -116,7 +120,7 @@ def upsert_daily_summary(sheet, summary):
         range=f"{SUMMARY_SHEET_NAME}!A:A",
     ).execute().get("values", [])
     analysis_date = str(summary.iloc[0]["analysis_date"])
-    row_values = summary.iloc[0].tolist()
+    row_values = dataframe_values(summary)[0]
 
     matching_row = next(
         (
@@ -149,7 +153,7 @@ def upsert_daily_summary(sheet, summary):
         range=f"{SUMMARY_SHEET_NAME}!A:A",
         valueInputOption="RAW",
         insertDataOption="INSERT_ROWS",
-        body={"values": [summary.iloc[0].tolist()]},
+        body={"values": [row_values]},
     ).execute()
     return "appended"
 

@@ -1,8 +1,10 @@
 import tempfile
 import unittest
+import json
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+import numpy as np
 import pandas as pd
 from googleapiclient.errors import HttpError
 
@@ -33,6 +35,14 @@ class GoogleSheetsExportTests(unittest.TestCase):
 
     def tearDown(self):
         self.temp_dir.cleanup()
+
+    def test_dataframe_values_are_json_serializable(self):
+        dataframe = pd.DataFrame({"count": [np.int64(101)]})
+
+        values = google_sheets_export.dataframe_values(dataframe)
+
+        self.assertEqual(values, [[101]])
+        json.dumps(values)
 
     def test_upload_clears_and_updates_sheet(self):
         service = MagicMock()
