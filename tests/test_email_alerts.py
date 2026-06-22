@@ -26,22 +26,46 @@ class EmailAlertsTests(unittest.TestCase):
                 }
             ]
         ).to_csv(self.alerts_path, index=False)
+        self.summary_path = Path(self.temp_dir.name) / "executive_summary.csv"
+        pd.DataFrame(
+            [
+                {
+                    "market_regime": "Mixed",
+                    "market_breadth_pct": 52.5,
+                    "watchlist_count": 17,
+                    "high_risk_count": 8,
+                    "executive_summary": "Leadership is selective.",
+                    "business_implications": "Focus on stock-level signals.",
+                    "top_opportunities": "AMD, ARM",
+                    "key_risks": "PLTR, WDAY",
+                    "recommended_actions": "Review leaders and risks.",
+                }
+            ]
+        ).to_csv(self.summary_path, index=False)
 
     def tearDown(self):
         self.temp_dir.cleanup()
 
     def test_builds_readable_alert_email(self):
         alerts = pd.read_csv(self.alerts_path)
+        summary = pd.read_csv(self.summary_path)
 
         message = email_alerts.build_alert_email(
             alerts,
             "sender@example.com",
             ["recipient@example.com"],
+            summary=summary,
         )
 
-        self.assertIn("1 signals for 2026-06-18", message["Subject"])
-        self.assertIn("AAPL: RSI_OVERBOUGHT, DAILY_MOVE", message.get_content())
-        self.assertIn("daily change +6.25%", message.get_content())
+        self.assertIn("MarketPulse Daily Brief | Mixed", message["Subject"])
+        plain = message.get_body(preferencelist=("plain",)).get_content()
+        html = message.get_body(preferencelist=("html",)).get_content()
+        self.assertIn("AAPL: RSI_OVERBOUGHT, DAILY_MOVE", plain)
+        self.assertIn("daily change +6.25%", plain)
+        self.assertIn("Executive Snapshot", html)
+        self.assertIn("Top Opportunities", html)
+        self.assertIn("AMD, ARM", html)
+        self.assertIn("Open Market Dashboard", html)
 
     def test_sends_email_with_configured_smtp(self):
         smtp = MagicMock()
@@ -50,6 +74,11 @@ class EmailAlertsTests(unittest.TestCase):
 
         with (
             patch.object(email_alerts, "STOCK_ALERTS_PATH", self.alerts_path),
+            patch.object(
+                email_alerts,
+                "EXECUTIVE_SUMMARY_PATH",
+                self.summary_path,
+            ),
             patch.object(email_alerts.smtplib, "SMTP_SSL", return_value=smtp_context),
             patch.dict(
                 os.environ,
