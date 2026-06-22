@@ -47,8 +47,9 @@ def _plain_text_body(alerts, summary, alert_date):
         f"ACTIVE ALERTS ({len(alerts)})",
     ]
     for row in alerts.itertuples(index=False):
+        ticker_label = getattr(row, "ticker_display", row.ticker)
         lines.append(
-            f"- {row.ticker}: {row.alert_type} | close {row.close:.2f} | "
+            f"- {ticker_label}: {row.alert_type} | close {row.close:.2f} | "
             f"RSI {row.rsi_14:.1f} | daily change {row.daily_change_pct:+.2f}%"
         )
     lines.extend(
@@ -81,12 +82,13 @@ def _html_body(alerts, summary, alert_date):
 
     alert_rows = []
     for index, row in enumerate(alerts.itertuples(index=False)):
+        ticker_label = getattr(row, "ticker_display", row.ticker)
         background = "#ffffff" if index % 2 == 0 else "#f8fafc"
         move_color = "#047857" if row.daily_change_pct >= 0 else "#b91c1c"
         alert_rows.append(
             f"""
             <tr style="background:{background};">
-              <td style="padding:12px;border-bottom:1px solid #e2e8f0;font-weight:700;">{escape(str(row.ticker))}</td>
+              <td style="padding:12px;border-bottom:1px solid #e2e8f0;font-weight:700;">{escape(str(ticker_label))}</td>
               <td style="padding:12px;border-bottom:1px solid #e2e8f0;">{escape(str(row.alert_type).replace('_', ' ').title())}</td>
               <td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;">{row.close:,.2f}</td>
               <td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;color:{move_color};font-weight:700;">{row.daily_change_pct:+.2f}%</td>

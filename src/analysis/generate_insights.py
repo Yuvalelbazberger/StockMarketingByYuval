@@ -5,6 +5,7 @@ from src.analysis.generate_alerts import add_alert_columns
 from src.analysis.generate_executive_summary import KPI_COLUMNS, save_executive_summary
 from src.analysis.generate_watchlist import add_watchlist_columns
 from src.analysis.risk_model import add_risk_columns
+from src.analysis.ticker_metadata import add_ticker_metadata
 from src.utils.config import MARTS_DATA_DIR
 
 
@@ -86,6 +87,7 @@ def main():
         .tail(1)
         .copy()
     )
+    latest = add_ticker_metadata(latest)
     latest = add_alert_columns(latest)
     latest = add_watchlist_columns(latest)
     latest = add_risk_columns(latest)
@@ -102,6 +104,8 @@ def main():
     output_columns = [
         "last_updated",
         "ticker",
+        "ticker_display",
+        "sector",
         "close",
         "daily_change_pct",
         "return_5_pct",

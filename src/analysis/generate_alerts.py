@@ -1,5 +1,6 @@
 import pandas as pd
 
+from src.analysis.ticker_metadata import add_ticker_metadata
 from src.utils.config import MARTS_DATA_DIR
 
 
@@ -68,11 +69,14 @@ def main():
         .tail(1)
         .copy()
     )
+    latest = add_ticker_metadata(latest)
     latest = add_alert_columns(latest)
 
     alert_columns = [
         "datetime",
         "ticker",
+        "ticker_display",
+        "sector",
         "close",
         "daily_change_pct",
         "rsi_14",

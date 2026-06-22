@@ -18,6 +18,8 @@ class EmailAlertsTests(unittest.TestCase):
                 {
                     "datetime": "2026-06-18",
                     "ticker": "AAPL",
+                    "ticker_display": "AAPL (Technology)",
+                    "sector": "Technology",
                     "close": 200.0,
                     "daily_change_pct": 6.25,
                     "rsi_14": 72.0,
@@ -60,10 +62,11 @@ class EmailAlertsTests(unittest.TestCase):
         self.assertIn("MarketPulse Daily Brief | Mixed", message["Subject"])
         plain = message.get_body(preferencelist=("plain",)).get_content()
         html = message.get_body(preferencelist=("html",)).get_content()
-        self.assertIn("AAPL: RSI_OVERBOUGHT, DAILY_MOVE", plain)
+        self.assertIn("AAPL (Technology): RSI_OVERBOUGHT, DAILY_MOVE", plain)
         self.assertIn("daily change +6.25%", plain)
         self.assertIn("Executive Snapshot", html)
         self.assertIn("Top Opportunities", html)
+        self.assertIn("AAPL (Technology)", html)
         self.assertIn("AMD, ARM", html)
         self.assertIn("Open Market Dashboard", html)
 
