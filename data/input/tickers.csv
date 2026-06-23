@@ -1,102 +1,102 @@
-ticker,sector
-AAPL,Technology
-ABNB,Consumer Discretionary
-ADBE,Technology
-ADI,Technology
-ADP,Industrials
-ADSK,Technology
-AEP,Utilities
-ALAB,Technology
-ALNY,Healthcare
-AMAT,Technology
-AMD,Technology
-AMGN,Healthcare
-AMZN,Consumer Discretionary
-APP,Technology
-ARM,Technology
-ASML,Technology
-AVGO,Technology
-AXON,Industrials
-BKNG,Consumer Discretionary
-BKR,Energy
-CCEP,Consumer Staples
-CDNS,Technology
-CEG,Utilities
-CMCSA,Communication Services
-COST,Consumer Staples
-CPRT,Industrials
-CRWD,Technology
-CRWV,Technology
-CSCO,Technology
-CSX,Industrials
-CTAS,Industrials
-DASH,Consumer Discretionary
-DDOG,Technology
-DXCM,Healthcare
-EA,Communication Services
-EXC,Utilities
-FANG,Energy
-FAST,Industrials
-FER,Industrials
-FTNT,Technology
-GEHC,Healthcare
-GILD,Healthcare
-GOOG,Communication Services
-GOOGL,Communication Services
-HON,Industrials
-IDXX,Healthcare
-INTC,Technology
-INTU,Technology
-ISRG,Healthcare
-KDP,Consumer Staples
-KHC,Consumer Staples
-KLAC,Technology
-LIN,Materials
-LITE,Technology
-LRCX,Technology
-MAR,Consumer Discretionary
-MCHP,Technology
-MDLZ,Consumer Staples
-MELI,Consumer Discretionary
-META,Communication Services
-MNST,Consumer Staples
-MPWR,Technology
-MRVL,Technology
-MSFT,Technology
-MSTR,Technology
-MU,Technology
-NBIS,Technology
-NFLX,Communication Services
-NVDA,Technology
-NXPI,Technology
-ODFL,Industrials
-ORLY,Consumer Discretionary
-PANW,Technology
-PAYX,Industrials
-PCAR,Industrials
-PDD,Consumer Discretionary
-PEP,Consumer Staples
-PLTR,Technology
-PYPL,Financials
-QCOM,Technology
-REGN,Healthcare
-RKLB,Industrials
-ROP,Industrials
-ROST,Consumer Discretionary
-SBUX,Consumer Discretionary
-SHOP,Technology
-SNDK,Technology
-SNPS,Technology
-STX,Technology
-TER,Technology
-TMUS,Communication Services
-TRI,Industrials
-TSLA,Consumer Discretionary
-TTWO,Communication Services
-TXN,Technology
-VRTX,Healthcare
-WBD,Communication Services
-WDAY,Technology
-WDC,Technology
-WMT,Consumer Staples
-XEL,Utilities
+ticker,sector,company_name
+AAPL,Technology,Apple Inc.
+ABNB,Consumer Discretionary,Airbnb Inc.
+ADBE,Technology,Adobe Inc.
+ADI,Technology,Analog Devices Inc.
+ADP,Industrials,Automatic Data Processing Inc.
+ADSK,Technology,Autodesk Inc.
+AEP,Utilities,American Electric Power Company Inc.
+ALAB,Technology,Astera Labs Inc.
+ALNY,Healthcare,Alnylam Pharmaceuticals Inc.
+AMAT,Technology,Applied Materials Inc.
+AMD,Technology,Advanced Micro Devices Inc.
+AMGN,Healthcare,Amgen Inc.
+AMZN,Consumer Discretionary,Amazon.com Inc.
+APP,Technology,AppLovin Corporation
+ARM,Technology,Arm Holdings plc
+ASML,Technology,ASML Holding N.V.
+AVGO,Technology,Broadcom Inc.
+AXON,Industrials,Axon Enterprise Inc.
+BKNG,Consumer Discretionary,Booking Holdings Inc.
+BKR,Energy,Baker Hughes Company
+CCEP,Consumer Staples,Coca-Cola Europacific Partners plc
+CDNS,Technology,Cadence Design Systems Inc.
+CEG,Utilities,Constellation Energy Corporation
+CMCSA,Communication Services,Comcast Corporation
+COST,Consumer Staples,Costco Wholesale Corporation
+CPRT,Industrials,Copart Inc.
+CRWD,Technology,CrowdStrike Holdings Inc.
+CRWV,Technology,CoreWeave Inc.
+CSCO,Technology,Cisco Systems Inc.
+CSX,Industrials,CSX Corporation
+CTAS,Industrials,Cintas Corporation
+DASH,Consumer Discretionary,DoorDash Inc.
+DDOG,Technology,Datadog Inc.
+DXCM,Healthcare,DexCom Inc.
+EA,Communication Services,Electronic Arts Inc.
+EXC,Utilities,Exelon Corporation
+FANG,Energy,Diamondback Energy Inc.
+FAST,Industrials,Fastenal Company
+FER,Industrials,Ferrovial SE
+FTNT,Technology,Fortinet Inc.
+GEHC,Healthcare,GE HealthCare Technologies Inc.
+GILD,Healthcare,Gilead Sciences Inc.
+GOOG,Communication Services,Alphabet Inc.
+GOOGL,Communication Services,Alphabet Inc.
+HON,Industrials,Honeywell International Inc.
+IDXX,Healthcare,IDEXX Laboratories Inc.
+INTC,Technology,Intel Corporation
+INTU,Technology,Intuit Inc.
+ISRG,Healthcare,Intuitive Surgical Inc.
+KDP,Consumer Staples,Keurig Dr Pepper Inc.
+KHC,Consumer Staples,Kraft Heinz Company
+KLAC,Technology,KLA Corporation
+LIN,Materials,Linde plc
+LITE,Technology,Lumentum Holdings Inc.
+LRCX,Technology,Lam Research Corporation
+MAR,Consumer Discretionary,Marriott International Inc.
+MCHP,Technology,Microchip Technology Inc.
+MDLZ,Consumer Staples,Mondelez International Inc.
+MELI,Consumer Discretionary,MercadoLibre Inc.
+META,Communication Services,Meta Platforms Inc.
+MNST,Consumer Staples,Monster Beverage Corporation
+MPWR,Technology,Monolithic Power Systems Inc.
+MRVL,Technology,Marvell Technology Inc.
+MSFT,Technology,Microsoft Corporation
+MSTR,Technology,MicroStrategy Incorporated
+MU,Technology,Micron Technology Inc.
+NBIS,Technology,Nebius Group N.V.
+NFLX,Communication Services,Netflix Inc.
+NVDA,Technology,NVIDIA Corporation
+NXPI,Technology,NXP Semiconductors N.V.
+ODFL,Industrials,Old Dominion Freight Line Inc.
+ORLY,Consumer Discretionary,O'Reilly Automotive Inc.
+PANW,Technology,Palo Alto Networks Inc.
+PAYX,Industrials,Paychex Inc.
+PCAR,Industrials,PACCAR Inc.
+PDD,Consumer Discretionary,PDD Holdings Inc.
+PEP,Consumer Staples,PepsiCo Inc.
+PLTR,Technology,Palantir Technologies Inc.
+PYPL,Financials,PayPal Holdings Inc.
+QCOM,Technology,QUALCOMM Incorporated
+REGN,Healthcare,Regeneron Pharmaceuticals Inc.
+RKLB,Industrials,Rocket Lab USA Inc.
+ROP,Industrials,Roper Technologies Inc.
+ROST,Consumer Discretionary,Ross Stores Inc.
+SBUX,Consumer Discretionary,Starbucks Corporation
+SHOP,Technology,Shopify Inc.
+SNDK,Technology,SanDisk Corporation
+SNPS,Technology,Synopsys Inc.
+STX,Technology,Seagate Technology Holdings plc
+TER,Technology,Teradyne Inc.
+TMUS,Communication Services,T-Mobile US Inc.
+TRI,Industrials,Thomson Reuters Corporation
+TSLA,Consumer Discretionary,Tesla Inc.
+TTWO,Communication Services,Take-Two Interactive Software Inc.
+TXN,Technology,Texas Instruments Incorporated
+VRTX,Healthcare,Vertex Pharmaceuticals Incorporated
+WBD,Communication Services,Warner Bros. Discovery Inc.
+WDAY,Technology,Workday Inc.
+WDC,Technology,Western Digital Corporation
+WMT,Consumer Staples,Walmart Inc.
+XEL,Utilities,Xcel Energy Inc.

@@ -75,6 +75,8 @@ def analyze_ticker(ticker, prices):
     result["volatility_20"] = result["return_1"].rolling(20).std() * np.sqrt(252)
     result["rsi_14"] = calculate_rsi(close)
 
+    result["volume_avg_10"] = volume.rolling(10).mean()
+    result["relative_volume_10d"] = volume / result["volume_avg_10"]
     result["volume_avg_20"] = volume.rolling(20).mean()
     result["volume_ratio"] = volume / result["volume_avg_20"]
 

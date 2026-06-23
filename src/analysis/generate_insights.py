@@ -4,6 +4,7 @@ import pandas as pd
 from src.analysis.generate_alerts import add_alert_columns
 from src.analysis.generate_executive_summary import KPI_COLUMNS, save_executive_summary
 from src.analysis.generate_watchlist import add_watchlist_columns
+from src.analysis.market_movers import add_market_mover_columns
 from src.analysis.risk_model import add_risk_columns
 from src.analysis.ticker_metadata import add_ticker_metadata
 from src.utils.config import MARTS_DATA_DIR
@@ -91,6 +92,7 @@ def main():
     latest = add_alert_columns(latest)
     latest = add_watchlist_columns(latest)
     latest = add_risk_columns(latest)
+    latest = add_market_mover_columns(latest)
 
     latest["insight"] = latest.apply(build_insight, axis=1)
 
@@ -106,8 +108,10 @@ def main():
         "ticker",
         "ticker_display",
         "sector",
+        "company_name",
         "close",
         "daily_change_pct",
+        "abs_daily_change_pct",
         "return_5_pct",
         "return_20_pct",
         "ma_20",
@@ -116,8 +120,19 @@ def main():
         "rsi_14",
         "volume",
         "volume_ratio",
+        "relative_volume_10d",
         "trend",
         "signal",
+        "mover_direction",
+        "mover_rank",
+        "gainer_rank",
+        "loser_rank",
+        "top_gainer",
+        "top_loser",
+        "unusual_volume",
+        "market_mover",
+        "market_mover_bucket",
+        "market_mover_reason",
         "risk_level",
         "risk_score",
         "risk_reason",
