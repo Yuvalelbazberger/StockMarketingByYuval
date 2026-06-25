@@ -27,6 +27,7 @@ The pipeline includes:
 - Google Sheets API
 - Looker Studio
 - Git / GitHub
+- KPI
 
 ## Project Structure
 
